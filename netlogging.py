@@ -9,5 +9,5 @@ logging.config.dictConfig(logger_config)
 log = logging.getLogger(__name__)
 
 
-log.debug("Logging is configured")
-log.critical("critical message")
+log.debug("debug message body")
+log.warning("warning message body")
