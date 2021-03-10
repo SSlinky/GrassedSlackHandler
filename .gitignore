@@ -137,3 +137,6 @@ _*
 
 # Specific Files
 config.json
+
+# Reinclude ignored docs
+!docs/_*
