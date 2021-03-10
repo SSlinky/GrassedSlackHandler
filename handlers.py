@@ -21,8 +21,7 @@ class SlackHandler(Handler):
         self.tags = [
             'header',
             'section',
-            'divider',
-            'code'
+            'divider'
         ]
 
         if fmt is not None:
@@ -94,14 +93,12 @@ class SlackHandler(Handler):
         https://api.slack.com/reference/block-kit/blocks
         """
         # Basic block template
-        block = {}
+        block = {
+            "type": type
+        }
 
         # Add the text if not a divider
         if type != "divider":
-            # Code is a special tag that's just a section wrapped in back ticks
-            if type == 'code':
-                txt = f'`{txt}`'
-                type = 'section'
             block["text"] = {
                 "text": txt
             }
@@ -109,9 +106,6 @@ class SlackHandler(Handler):
             # Add the text formatting type
             block["text"]["type"] = "plain_text" if type == "header" \
                 else "mrkdwn"
-
-        # Set the block type
-        block["type"] = type
 
         return block
 
