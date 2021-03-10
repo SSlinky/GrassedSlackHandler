@@ -2,11 +2,11 @@
     "version": 1,
     "formatters": {
         "standard": {
-            "format":       "%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+            "format":       "<header>%(levelname)s</header><section>%(asctime)s %(name)s</section><divider></divider><code>%(message)s</code>",
             "datefmt":      "%Y-%m-%d %H:%M:%S"
         },
         "markdown": {
-            "format":       "`%(asctime)s [%(levelname)s] %(name)s: %(message)s`",
+            "format":       "%(asctime)s [%(levelname)s] %(name)s: %(message)s",
             "datefmt":      "%Y-%m-%d %H:%M:%S"
         }
     },
@@ -21,18 +21,19 @@
         "slack": {
             "class":        "handlers.SlackHandler",
             "url":          "https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX",
-            "level":        "DEBUG",
+            "level":        "ERROR",
             "formatter":    "markdown"
         }
     },
 
     "loggers": {
         "": {
-            "handlers":     ["console", "slack"],
-            "level":        "INFO",
+            "handlers":     ["console"],
+            "level":        "DEBUG",
             "propagate":    false
         },
         "__main__": {
+            "handlers":     ["slack"],
             "level":        "DEBUG",
             "propagate":    true
         }
