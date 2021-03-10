@@ -10,9 +10,9 @@ Python Logger that can be configured to send messages to a Slack channel.
 In addition to this, the handler also builds on the `logging.Formatter` class to help build fancier Slack messages
 using their [layout blocks](https://api.slack.com/messaging/composing/layouts).
 The following tags are supported:
-* Header
-* Section
-* Divider
+* Header: plain text
+* Section: supports markdown
+* Divider: no text support
 
 ## Documentation
 [Read the docs](https://sslinky.github.io/SlackLogger/#/) for usage and examples [coming soon].
