@@ -8,5 +8,8 @@ logging.config.dictConfig(logger_config)
 log = logging.getLogger(__name__)
 
 
-log.debug("debug message body")
-log.warning("warning message body")
+log.debug('This is a debugging message.')
+log.info('This is an information message.')
+log.warning('This is a warning message.')
+log.error('This is an error message.')
+log.critical('This is a critical message.')

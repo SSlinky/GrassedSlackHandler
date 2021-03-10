@@ -2,15 +2,19 @@ import re
 import requests
 import logging
 
-from pprint import pprint
 from logging import Handler, Formatter, LogRecord
 
 
 class SlackHandler(Handler):
-    def __init__(self, url, testing=False, fmt=None, datefmt=None, style='%'):
+    """
+    Handler instances dispatch logging events to specific destinations.
+
+    The Slack handler class. Builds on the base handler to emit formatted
+    log records to a Slack channel.
+    """
+    def __init__(self, url, fmt=None, datefmt=None, style='%'):
         super().__init__()
         self.web_hook = url
-        self.testing = testing
         self.formats = []
         self.sformat = ''
         self.style = style
@@ -25,6 +29,7 @@ class SlackHandler(Handler):
             self.setFormatter(fmt, datefmt, style)
 
     def format(self, record: LogRecord) -> list:
+        """Builds a json payload that the Slack API can process"""
         blocks = []
 
         for name, fmt in self.formats:
@@ -74,19 +79,20 @@ class SlackHandler(Handler):
         Emits the record to Slack using an HTTP POST
         """
         layout_blocks = self.format(record)
-        if self.testing:
-            pprint(layout_blocks)
-        else:
-            payload = {
-                "blocks": layout_blocks
-            }
-            r = requests.post(self.web_hook, json=payload)
-            r.raise_for_status()
+        payload = {
+            "blocks": layout_blocks
+        }
+        r = requests.post(self.web_hook, json=payload)
+        r.raise_for_status()
 
     # region Private Helpers
 
     @staticmethod
     def _gen_layout_block(type: str, txt=None) -> dict:
+        """
+        Generates a layout 'block' that forms the post payload
+        https://api.slack.com/reference/block-kit/blocks
+        """
         # Basic block template
         block = {}
 
@@ -111,6 +117,7 @@ class SlackHandler(Handler):
 
     @staticmethod
     def _find_style_type(style) -> str:
+        """Determines the style type and returns the symbol indicator"""
         if isinstance(style, logging.PercentStyle):
             return '%'
         elif isinstance(style, logging.StrFormatStyle):
@@ -123,8 +130,3 @@ class SlackHandler(Handler):
         return rf'<({"|".join(self.tags)})>(.*?)</(\1)>'
 
     # endregion
-
-
-# class MultiFormatter(Formatter):
-#     def __init__(self, fmt=None, datefmt=None, style='%', validate=True):
-#         super().__init__()
