@@ -14,11 +14,51 @@ The following tags are supported:
 * Section: supports markdown
 * Divider: no text support
 
-## Documentation
-[Read the docs](https://sslinky.github.io/SlackLogger/#/) for usage and examples [coming soon].
+All tags require an open and a close tag. Tags cannot be nested.
 
-Check out Slack's documentation for [Incoming Webhooks](https://api.slack.com/messaging/webhooks) to learn how to set up a Slack app that can handle the incoming messages.
+## How it works
+You would like logs formatted with the level name as the header, with the time and source in one section, and the log message in another section.
+The sections should be separated with a divider.
 
-## Licence
-Released under [MIT](/LICENCE) by [Sam Vanderslink](https://github.com/SSlinky).
-Free to modify and reuse.
+``"<header>%(levelname)s</header><section>%(asctime)s %(name)s</section><divider></divider><section>`%(message)s`</section>"``
+
+The above formatting string will build a stacked layout in the form of:
+
+Block | Format
+--- | :---
+Header | `%(levelname)s`
+Section | `%(asctime)s %(name)s`
+Divider |
+Section | `` `%(message)s` ``
+
+
+The result for a call to `log.critical("You had better go and get mum!")` could look like this:
+
+```json
+{
+    "blocks": [
+        {
+            "type": "header",
+            "text": {
+                "text": "CRITICAL",
+                "type": "plain_text"
+            }
+        },
+        {
+            "type": "section",
+            "text": {
+                "text": "2021-03-10 16:57:06 __main__",
+                "type": "mrkdwn"
+            }
+        },
+        { "type": "divider" },
+        {
+            "type": "code",
+            "text": {
+                "text": "`You had better go and get mum!`",
+                "type": "mrkdwn"
+            }
+        }
+    ]
+}
+ ```
