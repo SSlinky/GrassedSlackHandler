@@ -34,7 +34,7 @@ class SlackHandler(Handler):
         for name, fmt in self.formats:
             if name in self.tags:
                 blocks.append(
-                    self._gen_layout_block(
+                    self.__gen_layout_block(
                         name, fmt.format(record)
                     ))
             else:
@@ -50,7 +50,7 @@ class SlackHandler(Handler):
         """
 
         # Get the format attributes
-        style = self._find_style_type(fmt._style)
+        style = self.__find_style_type(fmt._style)
         s_fmt = fmt._fmt
         d_fmt = fmt.datefmt
 
@@ -87,7 +87,7 @@ class SlackHandler(Handler):
     # region Private Helpers
 
     @staticmethod
-    def _gen_layout_block(type: str, txt=None) -> dict:
+    def __gen_layout_block(type: str, txt=None) -> dict:
         """
         Generates a layout 'block' that forms the post payload
         https://api.slack.com/reference/block-kit/blocks
@@ -110,7 +110,7 @@ class SlackHandler(Handler):
         return block
 
     @staticmethod
-    def _find_style_type(style) -> str:
+    def __find_style_type(style) -> str:
         """Determines the style type and returns the symbol indicator"""
         if isinstance(style, logging.PercentStyle):
             return '%'
