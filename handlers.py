@@ -121,6 +121,7 @@ class SlackHandler(Handler):
         raise ValueError('Unknown style type {type(style)}')
 
     def __pattern(self) -> str:
+        """Generates a regex pattern based on the tags"""
         return rf'<({"|".join(self.tags)})>(.*?)</(\1)>'
 
     # endregion
