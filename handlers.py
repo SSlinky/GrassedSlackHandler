@@ -62,6 +62,7 @@ class SlackHandler(Handler):
         ]
 
         if fmt is not None:
+            fmt = self.__parse_aliases(fmt)
             self.setFormatter(fmt, datefmt, style)
 
     def format(self, record: LogRecord) -> list:
@@ -101,6 +102,9 @@ class SlackHandler(Handler):
         style = self.__find_style_type(fmt._style)
         s_fmt = fmt._fmt
         d_fmt = fmt.datefmt
+
+        # Parse and prepare the format string
+        s_fmt = self.__parse_aliases(s_fmt)
 
         # Reset the class format values
         self.sformat = s_fmt
@@ -171,5 +175,35 @@ class SlackHandler(Handler):
     def __pattern(self) -> str:
         """Generates a regex pattern based on the tags"""
         return rf'<({"|".join(self.tags)})>(.*?)</(\1)>'
+
+    @staticmethod
+    def __parse_aliases(format_string: str) -> str:
+        """
+        Replaces the tags with their aliases to allow more flexible
+        / shorthand tagging.
+        """
+        aliases = [
+            ('h', 'header'),
+            ('hdr', 'header'),
+            ('s', 'section'),
+            ('sect', 'section'),
+            ('d', 'divider')
+        ]
+
+        # Find and replace aliases
+        for f, r in aliases:
+            format_string = re.sub(
+                pattern=rf'(<[\/]?)({f})(>)',
+                repl=rf'\g<1>{r}\g<3>',
+                string=format_string)
+
+        # Find and replace unclosed dividers
+        format_string = re.sub(
+            pattern=r'<divider>(?!</divider>)|(?<!<divider>)</divider>',
+            repl=r'<divider></divider>',
+            string=format_string
+        )
+
+        return format_string
 
     # endregion
