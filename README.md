@@ -19,7 +19,7 @@ The following tags are supported:
 
 Check out Slack's documentation for [Incoming Webhooks](https://api.slack.com/messaging/webhooks) to learn how to set up a Slack app that can handle the incoming messages.
 
-## Usage
+## Message Rate Limits
 SlackHandler is designed to log important messages to a place where people can view them immediately and respond.
 If you think your app may exceed Slack's rate limits of one per second per channel, then this handler may not be for you.
 
