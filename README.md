@@ -15,7 +15,7 @@ The following tags are supported:
 * Divider: no text support
 
 ## Documentation
-[Read the docs](https://sslinky.github.io/SlackLogger/#/) for usage and examples [coming soon].
+[Read the docs](https://sslinky.github.io/SlackLogger/#/) for usage and examples.
 
 Check out Slack's documentation for [Incoming Webhooks](https://api.slack.com/messaging/webhooks) to learn how to set up a Slack app that can handle the incoming messages.
 
