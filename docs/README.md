@@ -9,12 +9,19 @@ Python logging handler that can be configured to send messages to a Slack channe
 
 In addition to this, the handler also builds on the `logging.Formatter` class to help build fancier Slack messages
 using their [layout blocks](https://api.slack.com/messaging/composing/layouts).
-The following tags are supported:
-* Header: plain text
-* Section: supports markdown
-* Divider: no text support
+The following tags are supported with aliases for brevity / readability:
+* Header
+  - Plain text
+  - Aliases: h, hdr
+* Section
+  - Markdown
+  - Aliases: s, sect
+* Divider
+  - No text support
+  - Aliases: d
+  - Notes: Supports opening, closing, or both tags.
 
-All tags require an open and a close tag. Tags cannot be nested.
+Tags cannot be nested.
 
 ## How it works
 The SlackHandler uses a url and improved format string to log records to a Slack channel using a webhook url.
@@ -24,7 +31,7 @@ The format string is used to generate the layout blocks in the exact same way as
 ## Example format
 You would like logs formatted with the level name as the header, with the time and source in one section, and the log message in another section. The sections should be separated with a divider.
 
-``"<header>%(levelname)s</header><section>%(asctime)s %(name)s</section><divider></divider><section>`%(message)s`</section>"``
+``"<hdr>%(levelname)s</hdr><sect>%(asctime)s %(name)s</sect><d><s>`%(message)s`</s>"``
 
 The above formatting string will build a stacked layout in the form of:
 
