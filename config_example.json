@@ -2,7 +2,7 @@
     "version": 1,
     "formatters": {
         "standard": {
-            "format":       "<header>%(levelname)s</header><section>%(asctime)s %(name)s</section><divider></divider><section>%(message)s</section>",
+            "format":       "<h>%(levelname)s</hdr><sect>%(asctime)s %(name)s</s></divider><section>%(message)s</section>",
             "datefmt":      "%Y-%m-%d %H:%M:%S"
         },
         "markdown": {
