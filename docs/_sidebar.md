@@ -1,1 +1,3 @@
-Coming soon!
+- [Home](/ "SlackLogger")
+- [Licence](https://github.com/SSlinky/SlackLogger/blob/master/LICENSE)
+- [Documentation](Docs/SlackHandler.md)
