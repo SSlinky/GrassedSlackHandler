@@ -13,3 +13,8 @@ log.info('This is an information message.')
 log.warning('This is a warning message.')
 log.error('This is an error message.')
 log.critical('You had better go and get mum!')
+
+try:
+    x = 1 / 0
+except ZeroDivisionError:
+    log.exception("Turns out you can't divide by zero!")
