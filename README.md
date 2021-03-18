@@ -1,7 +1,7 @@
 # SlackLogger
 Python Logger that can be configured to send messages to a Slack channel.
 
-[![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/SSlinky/VBA-ExtendedDictionary/blob/master/README.md#license)
+[![License](https://img.shields.io/badge/License-GPL3-blue.svg)](https://github.com/SSlinky/VBA-ExtendedDictionary/blob/master/README.md#license)
 [![Python](https://img.shields.io/badge/Python-3.8-yellow?logo=python)](https://docs.python.org/3/)
 [![Slack](https://img.shields.io/badge/Slack-Webhooks-%23007a5a)](https://slack.com/intl/en-au/)
 
@@ -26,5 +26,5 @@ If you think your app may exceed Slack's rate limits of one per second per chann
 SlackHandler does not use any rate limiting tactics, nor does it respond to rate limit requests from Slack. This may result in your Slack app being permanently disabled.
 
 ## Licence
-Released under [MIT](/LICENCE) by [Sam Vanderslink](https://github.com/SSlinky).
+Released under [GPL](/LICENCE) by [Sam Vanderslink](https://github.com/SSlinky).
 Free to modify and reuse.
