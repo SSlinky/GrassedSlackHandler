@@ -1,3 +1,4 @@
 - [Home](/ "SlackLogger")
 - [Licence](https://github.com/SSlinky/SlackLogger/blob/master/LICENSE)
-- [Documentation](Docs/SlackHandler.md)
+- [Documentation](docs/SlackHandler.md)
+- [Dictionary Configuration](docs/dictConfig.md)
