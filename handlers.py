@@ -1,7 +1,8 @@
 import re
-import requests
+import time
 import logging
-
+import requests
+import concurrent.futures as cf
 from logging import Handler, LogRecord
 
 
@@ -49,21 +50,23 @@ class SlackHandler(Handler):
     The Slack handler class builds on the base handler to emit formatted
     log records to a Slack channel.
     """
-    def __init__(self, url, fmt=None, datefmt=None, style='%'):
+    def __init__(self, url):
         super().__init__()
+
+        # Class setup
         self.web_hook = url
         self.formats = []
         self.sformat = ''
-        self.style = style
         self.tags = [
             'header',
             'section',
             'divider'
         ]
 
-        if fmt is not None:
-            fmt = self.__parse_aliases(fmt)
-            self.setFormatter(fmt, datefmt, style)
+        # Set up asynchronous posting
+        self.pipeline = Pipeline()
+        self.threads = cf.ThreadPoolExecutor(max_workers=1)
+        self.threads.submit(self.__post_to_slack)
 
     def format(self, record: LogRecord) -> list:
         """Builds a json payload that the Slack API can process"""
@@ -129,17 +132,53 @@ class SlackHandler(Handler):
         """
         Emits the record to Slack using an HTTP POST
         """
+        # Generate the message payload
         layout_blocks = self.format(record)
         payload = {
             "blocks": layout_blocks
         }
-        r = requests.post(self.web_hook, json=payload)
-        r.raise_for_status()
+        # Queue the payload
+        self.__queue_message(payload)
 
     # region Private Helpers
 
+    def __queue_message(self, payload: dict):
+        """Queues the message to be picked up by the consumer"""
+        self.pipeline.queue_item(payload)
+
+    def __post_to_slack(self, tick=1, max_tries=3):
+        """
+        Should be run on a separate thread.
+        Consumes messages in the pipeline, sending
+        them to the Slack channel.
+        """
+        while self.pipeline.run:
+            while True:
+                # Get the first in message
+                payload: dict = self.pipeline.get_first_in_item()
+                if payload is None:
+                    break
+
+                # Send to Slack
+                r = requests.post(self.web_hook, json=payload)
+
+                # Check for backoff and retry after the specified time
+                tries = 0
+                while r.status_code == 429:
+                    tries += 1
+                    time.sleep(r.headers.get('Retry-After', tick))
+                    r = requests.post(self.web_hook, json=payload)
+                    if tries >= max_tries:
+                        break
+
+                # Raise an error for these status codes
+                if r.status_code in [400, 404, 410, 429, 500]:
+                    r.raise_for_status()
+
+                time.sleep(tick)
+
     @staticmethod
-    def __gen_layout_block(type: str, txt=None) -> dict:
+    def __gen_layout_block(type: str, txt: str) -> dict:
         """
         Generates a layout 'block' that forms the post payload
         https://api.slack.com/reference/block-kit/blocks
@@ -207,3 +246,42 @@ class SlackHandler(Handler):
         return format_string
 
     # endregion
+
+
+class Pipeline():
+    """
+    A container that producers and consumers can
+    set to and get from respectively.
+
+    This container operates on a fifo
+    (first in, first out) basis,
+    """
+    def __init__(self):
+        self.queue = []
+        self.__run = True
+
+    def queue_item(self, item):
+        """Adds an item to the queue"""
+        self.queue.append(item)
+
+    def get_first_in_item(self):
+        """Returns the first-in item"""
+        if len(self.queue) == 0:
+            return
+        item = self.queue.pop(0)
+        return item
+
+    def flag_closed(self):
+        """
+        Flags this queue as closed.
+
+        This attribute does nothing by itself. It is intended to be
+        a mechanism by which a consumer running on a loop can break
+        the loop and end execution.
+        """
+        self.run = False
+
+    @property
+    def run(self):
+        """Indicates this pipeline expects to continue receiving items"""
+        return self.__run
