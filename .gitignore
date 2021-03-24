@@ -140,3 +140,6 @@ config.json
 
 # Reinclude ignored docs
 !docs/_*
+
+# Reinclude init
+!__init__.py
