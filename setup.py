@@ -1,20 +1,26 @@
+import pathlib
 from setuptools import setup, find_packages
 
-with open("README.md", "r") as fh:
-    readme = fh.read()
+
+# The directory containing this file
+HERE = pathlib.Path(__file__).parent
+
+# Read the README text
+README = (HERE / "README.md").read_text()
 
 
 setup(
     name='grassed',  
-    version='0.1.0',
+    version='0.0.0',
+    license='GPLv3',
     author="Sam Vanderslink",
     author_email="sam@notis.net.au",
-    description="Python logging handler that can send messages to a Slack channel.",
-    long_description=readme,
+    description="Python logger handler that can send messages to a Slack channel.",
+    long_description=README,
     long_description_content_type="text/markdown",
     url="https://github.com/SSlinky/SlackLogger",
-    package_dir={'': 'grassed'}
-    packages=find_packages(),
+    package_dir={'': 'src'},
+    packages=['grassed'],
     classifiers=[
         "Programming Language :: Python :: 3 :: Only",
         "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
@@ -22,5 +28,12 @@ setup(
         "Intended Audience :: Developers",
         "Topic :: System :: Logging"
     ],
-    keywords="slack, logging handler"
+    install_requires=[
+        'concurrent.futures',
+        'logging',
+        're',
+        'requests',
+        'time'
+        ],
+    keywords="slack, logging handler, logger handler, logger, handler, logging"
 )
