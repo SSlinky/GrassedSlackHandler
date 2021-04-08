@@ -1,10 +1,9 @@
-# SlackLogger
-Python Logger that can be configured to send messages to a Slack channel.
+# Grassed Logging Handler
+Python logging handler that can be configured to send messages to a Slack channel.
 
 [![License](https://img.shields.io/badge/License-GPL3-blue.svg)](https://github.com/SSlinky/VBA-ExtendedDictionary/blob/master/README.md#license)
 [![Python](https://img.shields.io/badge/Python-3.8-yellow?logo=python)](https://docs.python.org/3/)
 [![Slack](https://img.shields.io/badge/Slack-Webhooks-%23007a5a)](https://slack.com/intl/en-au/)
-[![Buy me a Beer!](https://img.shields.io/badge/Buy%20me%20a-Beer-yellow)](https://www.buymeacoffee.com/sslinky)
 
 `SlackLogger` builds on the base built-in `logging.Handler` to allow logging messages to logged via HTTPS to a Slack channel.
 
