@@ -29,11 +29,7 @@ setup(
         "Topic :: System :: Logging"
     ],
     install_requires=[
-        'concurrent.futures',
-        'logging',
-        're',
-        'requests',
-        'time'
+        'requests'
         ],
     keywords="slack, logging handler, logger handler, logger, handler, logging"
 )
