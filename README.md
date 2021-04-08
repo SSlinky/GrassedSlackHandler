@@ -14,6 +14,9 @@ The following tags are supported:
 * Section: supports markdown
 * Divider: no text support
 
+## Getting Started
+The package can be installed from the PyPi repository with `pip install grassed` or cloned from the [git repo](https://github.com/SSlinky/GrassedSlackHandler).
+
 ## Documentation
 [Read the docs](https://sslinky.github.io/SlackLogger/#/) for usage and examples.
 
@@ -21,10 +24,8 @@ Check out Slack's documentation for [Incoming Webhooks](https://api.slack.com/me
 
 ## Message Rate Limits
 SlackHandler is designed to log important messages to a place where people can view them immediately and respond.
-If you think your app may exceed Slack's rate limits of one per second per channel, then this handler may not be for you.
-
-SlackHandler does not use any rate limiting tactics, nor does it respond to rate limit requests from Slack. This may result in your Slack app being permanently disabled.
+Note that Slack imposes message rate limits which SlackHandler respects.
 
 ## Licence
-Released under [GPL](/LICENCE) by [Sam Vanderslink](https://github.com/SSlinky).
+Released under [GPLv3](/LICENCE) by [Sam Vanderslink](https://github.com/SSlinky).
 Free to modify and reuse.
