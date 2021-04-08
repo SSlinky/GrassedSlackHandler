@@ -10,8 +10,12 @@ from logging import Handler, LogRecord
 
 class Formatter(logging.Formatter):
     """
-    Formatter instances are used to convert a LogRecord to text.
-    See base class for further information.
+    A formatter that includes some logic for Slack's layout blocks.
+
+    Allows for a more complex formatter, including tags to
+    separate out formatters into blocks that Slack interprets.
+
+    Extends the logging.Formatter class.
     """
 
     def format(self, record):
@@ -26,9 +30,15 @@ class Formatter(logging.Formatter):
             record.asctime = self.formatTime(record, self.datefmt)
         return self.formatMessage(record)
 
-    def format_exception(self, record):
+    def format_exception(self, record) -> str:
         """
         Formats the exception message, if there is one, as a code block.
+
+        Arguments:
+            record -- the log record passed in by the logger
+        
+        Returns:
+            str    -- a formatted exception message
         """
         s = '```'
         if record.exc_info:
@@ -71,7 +81,15 @@ class SlackHandler(Handler):
         self.threads.submit(self.__post_to_slack)
 
     def format(self, record: LogRecord) -> list:
-        """Builds a json payload that the Slack API can process"""
+        """
+        Builds a json payload that the Slack API can process
+        
+        Arguments:
+            record -- the log record passed in by the logger
+
+        Returns:
+            list   -- a layout block stack Slack can interpret
+        """
         blocks = []
 
         # Generate the main layout blocks
@@ -99,8 +117,10 @@ class SlackHandler(Handler):
 
     def setFormatter(self, fmt: Formatter) -> None:
         """
-        Allows for a more complex formatter, including tags to
-        separate out formatters into blocks that Slack interprets.
+        Sets the formatter to be used with this handler
+
+        Arguments:
+            fmt -- A logging.Formatter object
         """
 
         # Get the format attributes
@@ -133,6 +153,9 @@ class SlackHandler(Handler):
     def emit(self, record: LogRecord) -> None:
         """
         Emits the record to Slack using an HTTP POST
+
+        Arguments:
+            record -- the log record passed in by the logger
         """
         # Generate the message payload
         layout_blocks = self.format(record)
@@ -144,16 +167,26 @@ class SlackHandler(Handler):
 
     # region Private Helpers
 
-    def __queue_message(self, payload: dict):
-        """Queues the message to be picked up by the consumer"""
+    def __queue_message(self, payload: dict) -> None:
+        """
+        Queues the message to be picked up by the consumer
+        
+        Arguments:
+            payload -- the json content to send to slack via post
+        """
         self.pipeline.queue_item(payload)
 
-    def __post_to_slack(self, tick=1, max_tries=3):
+    def __post_to_slack(self, tick=1, max_tries=3) -> None:
         """
-        Should be run on a separate thread.
-        Consumes messages in the pipeline, sending
-        them to the Slack channel.
+        Consumes messages in the pipeline, sending them to the Slack channel
+        
+        Arguments:
+            tick      -- the delay between messages to avoid bursts
+            max_tries -- max times told to back off before failing
+
+        Note: Should be run on a separate thread.
         """
+
         while self.pipeline.run:
             while True:
                 # Get the first in message
@@ -184,6 +217,13 @@ class SlackHandler(Handler):
         """
         Generates a layout 'block' that forms the post payload
         https://api.slack.com/reference/block-kit/blocks
+
+        Arguments:
+            type -- the type of layout block to generate
+            txt  -- the content of the layout block
+
+        Returns:
+            dict -- a fully formatted layout block
         """
         # Basic block template
         block = {
@@ -214,14 +254,19 @@ class SlackHandler(Handler):
         raise ValueError('Unknown style type {type(style)}')
 
     def __pattern(self) -> str:
-        """Generates a regex pattern based on the tags"""
+        """Returns a regex pattern based on the tags"""
         return rf'<({"|".join(self.tags)})>(.*?)</(\1)>'
 
     @staticmethod
     def __parse_aliases(format_string: str) -> str:
         """
-        Replaces the tags with their aliases to allow more flexible
-        / shorthand tagging.
+        Replaces the tags with their aliases to allow more flexible tagging
+
+        Arguments:
+            format_string: the format string to be parsed and replaced
+        
+        Returns:
+            str -- a format string once alias replacements have been performed
         """
         aliases = [
             ('h', 'header'),
@@ -262,20 +307,25 @@ class Pipeline():
         self.queue = []
         self.__run = True
 
-    def queue_item(self, item):
-        """Adds an item to the queue"""
+    def queue_item(self, item) -> None:
+        """
+        Adds an item to the bottom of the queue
+        
+        Arguments:
+            item -- the item to be added
+        """
         self.queue.append(item)
 
-    def get_first_in_item(self):
-        """Returns the first-in item"""
+    def get_first_in_item(self) -> object:
+        """Returns the item at the top of the queue"""
         if len(self.queue) == 0:
             return
         item = self.queue.pop(0)
         return item
 
-    def flag_closed(self):
+    def flag_closed(self) -> None:
         """
-        Flags this queue as closed.
+        Flags this queue as closed
 
         This attribute does nothing by itself. It is intended to be
         a mechanism by which a consumer running on a loop can break
@@ -284,6 +334,6 @@ class Pipeline():
         self.run = False
 
     @property
-    def run(self):
+    def run(self) -> bool:
         """Indicates this pipeline expects to continue receiving items"""
         return self.__run
