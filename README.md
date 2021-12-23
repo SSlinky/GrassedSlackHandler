@@ -18,7 +18,7 @@ The following tags are supported:
 The package can be installed from the PyPi repository with `pip install grassed` or cloned from the [git repo](https://github.com/SSlinky/GrassedSlackHandler).
 
 ## Documentation
-[Read the docs](https://sslinky.github.io/SlackLogger/#/) for usage and examples.
+[Read the docs](https://sslinky.github.io/GrassedSlackHandler/#/) for usage and examples.
 
 Check out Slack's documentation for [Incoming Webhooks](https://api.slack.com/messaging/webhooks) to learn how to set up a Slack app that can handle the incoming messages.
 
